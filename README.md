@@ -1,6 +1,6 @@
 # This is component of upload files to cloudinary.
 
-### Teachnologies
+### Technologies
 
 - Vite
 - TypeScript + React
