@@ -5,7 +5,16 @@ function App() {
   return (
     <>
     <div>
-      <Upload />
+      <Upload 
+        ChooseManyFiles = {false}
+        ChooseImages = {false}
+        ChooseAudio = {false}
+        ChooseExcel = {true}
+        ChoosePDF  = {false}
+        ChooseVideos = {false}
+        ChooseWord = {false}
+        IsPreview = {true}
+      />
     </div>
     </>
   )
