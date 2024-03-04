@@ -30,7 +30,7 @@ color: #5d4dcc;
 
     &:hover {
     color: #5d4dcc;
-    background-color: #bdb7b7;
+    background-color: #b6adf0;
     }
 }
 .upload-button span {
@@ -78,6 +78,40 @@ background-color: #f1efff;
 .state-icon{
     cursor: pointer;
     margin-right: 0;
+}
+
+.function-buttons{
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.upload-button{
+    width: 430px;
+    padding: 8px 15px; 
+    font-size: 17px;
+    font-weight: 550;
+    border-radius: 6px;
+    color: #ffffff;
+    background-color: #5d4dcc;
+    border: none;
+}
+
+.delete-button, .edit-button, .done-button{
+    width: 100px;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 8px 15px; 
+    font-size: 17px;
+    font-weight: 500;
+    border-radius: 6px;
+    color: #ffffff;
+    background-color: #5d4dcc;
+    border: none;
+}
+
+.upload-button:hover, .delete-button:hover , .edit-button:hover , .done-button:hover{
+    background-color: #7b6cdf;
 }
 
 #other-container {

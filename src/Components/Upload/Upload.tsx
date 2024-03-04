@@ -354,6 +354,10 @@ const Upload: React.FC<UploadProps> = ({
     }
   }
 
+  const HandleEditButton = () => {
+
+  }
+
   //console.log(SelectedFiles);
 
   return (
@@ -362,7 +366,7 @@ const Upload: React.FC<UploadProps> = ({
         <div className='content' >
           <div>
               <div>
-                <button className="upload-button-area upload-button" onClick={HandleChooseFilesButton}>
+                <button className="upload-button-area" onClick={HandleChooseFilesButton}>
                   <Icon path={mdiCloudArrowUpOutline} size={2}/> Upload File
                 </button>
                 <input ref={InputRef} id="file-input" type="file" onChange={HandleFileInputChange} multiple={ChooseManyFiles} style={{ display: 'none' }} />
@@ -410,12 +414,18 @@ const Upload: React.FC<UploadProps> = ({
           } 
           </div>
         </div>
-          {SelectedFiles.length > 0 ?
-            <div className='fucntion-buttons'>
-              <button type='button' onClick={HandleUploadButton} className='upload-button'>Upload</button>
-            </div>
-            : " "
-          }
+        <div className='function-buttons'>
+          {SelectedFiles.length > 0 && HandleState != "Done" ?( 
+                <button type='button' onClick={HandleUploadButton} className='upload-button'>Upload</button>
+             ) : HandleState === 'Done' ? ( 
+              <div className='handel-done-upload'>
+                <button type='button' onClick={HandleDeletelButton} className='delete-button'>Delete</button>
+                <button type='button' onClick={HandleEditButton} className='edit-button'>Edit</button>
+                <button type='button' onClick={HandleCancelButton} className='done-button'>Done</button>
+              </div>
+             ) : " "  
+            }
+        </div>
         <div>
           {ShowPreview && 
             <div id='image-container'></div>
@@ -426,10 +436,7 @@ const Upload: React.FC<UploadProps> = ({
         </div>
         <div>
           {ShowPreview && 
-            <div>
-              <button type='button' onClick={HandleCancelButton} className='cansel-button'>Cancel</button>
-              <button type='button' onClick={HandleDeletelButton} className='delete-button'>Delete</button>
-            </div>
+            <div></div>
           }
         </div>
       </div>
