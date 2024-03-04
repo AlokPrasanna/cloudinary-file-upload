@@ -374,13 +374,13 @@ const Upload: React.FC<UploadProps> = ({
                     </div>
                     <div className='state-icon'>
                       {HandleState  === "Delete" ? (
-                        <div onClick={HandleCancelButton}>
+                        <div className='icon-animation' onClick={HandleCancelButton}>
                           <Icon path={mdiFileDocumentRemoveOutline } size={1.5}  color="#b80000" /> 
                         </div>
                       ) : HandleState === "Uploading" ? (
                         <Icon path={mdiLoading} size={1.5} spin   /> 
                       ) : HandleState === "Done" && FileType === "image" ? (
-                        <div onClick={HandlePreview}>
+                        <div className='icon-animation' onClick={HandlePreview}>
                           <Icon path={mdiFileEyeOutline} size={1.5} />
                         </div>
                       ) : HandleState === "Done" && FileType != "image" ? (
