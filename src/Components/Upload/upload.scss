@@ -71,13 +71,21 @@ background-color: #f1efff;
     white-space: nowrap;
     overflow: hidden; 
     text-overflow: ellipsis; 
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 500;
 }
 
 .state-icon{
     cursor: pointer;
     margin-right: 0;
+    z-index: 10;
+    transition: transform 0.2s ease-in-out; 
+    transform: scale(1);
+}
+
+.state-icon:hover{
+    z-index: 11;
+    transform: scale(1.2);
 }
 
 .function-buttons{
@@ -94,6 +102,17 @@ background-color: #f1efff;
     border-radius: 6px;
     color: #ffffff;
     background-color: #5d4dcc;
+    border: none;
+}
+
+.remove-file-button{
+    width: 430px;
+    padding: 8px 15px; 
+    font-size: 17px;
+    font-weight: 550;
+    border-radius: 6px;
+    color: #ffffff;
+    background-color: #b80000;
     border: none;
 }
 
@@ -114,8 +133,24 @@ background-color: #f1efff;
     background-color: #7b6cdf;
 }
 
-#other-container {
-    color: red;
-    font-size: larger;
+.error-box{
+    border-color: #b80000;
+    color: #b80000;
 }
 
+.error-text{
+    color: #b80000;
+}
+
+.preview-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.image-container img{
+    width:500px;
+    height:auto;
+    padding: 8px 15px;
+}

@@ -6,14 +6,14 @@ function App() {
     <>
     <div>
       <Upload 
+        Title={'Upload Image'}
         ChooseManyFiles = {false}
-        ChooseImages = {false}
+        ChooseImages = {true}
         ChooseAudio = {false}
-        ChooseExcel = {true}
+        ChooseExcel = {false}
         ChoosePDF  = {false}
         ChooseVideos = {false}
         ChooseWord = {false}
-        IsPreview = {true}
       />
     </div>
     </>

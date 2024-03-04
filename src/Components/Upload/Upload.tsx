@@ -10,11 +10,14 @@ import { mdiFileExcel } from '@mdi/js';
 import { mdiMusicBox } from '@mdi/js';
 import { mdiFileWord } from '@mdi/js';
 import { mdiFileDocumentAlertOutline } from '@mdi/js';
-import { mdiDeleteOutline } from '@mdi/js';
+import { mdiFileDocumentRemoveOutline } from '@mdi/js';
 import { mdiLoading } from '@mdi/js';
+import { mdiFileEyeOutline } from '@mdi/js';
+import { mdiAlertCircleOutline } from '@mdi/js';
 import { mdiCheckCircleOutline } from '@mdi/js';
 
 interface UploadProps {
+  Title:string,
   ChooseManyFiles: boolean;
   ChooseImages: boolean;
   ChooseVideos: boolean;
@@ -22,18 +25,17 @@ interface UploadProps {
   ChooseExcel: boolean;
   ChooseAudio: boolean;
   ChooseWord: boolean;
-  IsPreview: boolean;
 }
 
 const Upload: React.FC<UploadProps> = ({
+  Title,
   ChooseManyFiles,
   ChooseImages,
   ChooseVideos,
   ChoosePDF,
   ChooseExcel,
   ChooseAudio,
-  ChooseWord,
-  IsPreview
+  ChooseWord
 }) => {
 
   const InputRef = useRef<HTMLInputElement>(null);
@@ -49,12 +51,13 @@ const Upload: React.FC<UploadProps> = ({
   const [ShowPreview , setPreview] = useState<boolean>(false);
   const [SecureUrl, setSecureUrl] = useState<string>(" ");
   const [FileType , setFileType] = useState<string>(" ");
+  const [PublicId , setPublicId] = useState<string>(" ");
   const [ResourceFileType, setResourceFileType] = useState<string>(" ");
   const [FilePreset, setFilePreset] = useState<string>(" ");
   const [FileIcon , setFileIcon] = useState<string>(" ");
   const [HandleState , setHandleState] = useState<string>(" ");
 
-  const allowedImageTypes = ['image/png', 'image/jpeg'];
+  const allowedImageTypes = ['image/png', 'image/jpeg', 'image/jpg'];
   const allowedVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime'];
   const allowedPDFTypes = ['application/pdf'];
   const allowedExcelTypes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
@@ -62,6 +65,7 @@ const Upload: React.FC<UploadProps> = ({
   const allowedWordTypes = ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
 
   const saveFilesByType = (files: File[]) => {
+    setShowErrorMessage(false);
     files.forEach(file => {
       if (ChooseImages && allowedImageTypes.includes(file.type)) {
         setImages(prevImages => [...prevImages, file]);
@@ -97,6 +101,7 @@ const Upload: React.FC<UploadProps> = ({
 
   const HandleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    setHandleState("Delete");
     const Files = Array.from(event.dataTransfer.files);
     if (ChooseManyFiles) {
       setSelectedFiles((prevFiles) => [...prevFiles, ...Files]);
@@ -184,17 +189,14 @@ const Upload: React.FC<UploadProps> = ({
       let Api = `https://api.cloudinary.com/v1_1/dtsmgh4yv/${ResourceType}/upload`;
 
       const Res = await axios.post(Api , Data);
-      const {secure_url} = Res.data;
+      const {secure_url , public_id} = Res.data;
 
       setFileType(Type);
       setSecureUrl(secure_url);
+      setPublicId(public_id);
       setResourceFileType(ResourceType);
       setFilePreset(Preset);
-
-      if(IsPreview){
-        Preview(secure_url , Type);
-        setPreview(true);
-      }
+      console.log(secure_url);
       return secure_url;
 
     } catch (error) {
@@ -202,62 +204,35 @@ const Upload: React.FC<UploadProps> = ({
     }
   }
 
-  const Preview = async(Url:string , Type:string) => {
-    const CloudinaryUrl:any = Url;
-    console.log('Type: ' , Type);
+  const Preview = async() => {
+    const CloudinaryUrl:any = SecureUrl;
+    setPreview(true);
     try {
-      if(Type === "image"){
+      if(CloudinaryUrl){
         const Image = document.createElement('img');
         Image.src = CloudinaryUrl;
         Image.alt = 'Uploaded Image';
     
         const ImageContainer = document.getElementById('image-container');
-        ImageContainer?.appendChild(Image);
-       }else if (Type === "video") {
-        const File:any = document.createElement('span');
-        File.textContent = "Your Video is Uploded";
-    
-        const OtherContainer = document.getElementById('other-container');
-        OtherContainer?.appendChild(File);
-    
-       }
-       else if (Type === "audio") {
-        const File:any = document.createElement('span');
-        File.textContent = "Your Audio file is Uploded";
-    
-        const OtherContainer = document.getElementById('other-container');
-        OtherContainer?.appendChild(File);
-    
-       }
-       else if (Type === "pdf") {
-        const File:any = document.createElement('span');
-        File.textContent = "Your PDF is Uploded";
-    
-        const OtherContainer = document.getElementById('other-container');
-        OtherContainer?.appendChild(File);
-    
-       }
-       else if (Type === "word") {
-        const File:any = document.createElement('span');
-        File.textContent = "Your Word document is Uploded";
-    
-        const OtherContainer = document.getElementById('other-container');
-        OtherContainer?.appendChild(File);
-    
-       }
-       else if (Type === "excel") {
-        const File:any = document.createElement('span');
-        File.textContent = "Your Excel file is Uploded";
-    
-        const OtherContainer = document.getElementById('other-container');
-        OtherContainer?.appendChild(File);
-    
-       }else{
-        console.log("Error");
+        if(ImageContainer){
+          ImageContainer.appendChild(Image);
+        } else {
+          console.error("Image container not found");
+        }
+       } else {
+        console.error("Cloudinary URL is invalid");
        }
     } catch (error) {
       console.error(error);
     }
+  }  
+
+  const HandlePreview = () => {
+    if(!ShowPreview && SecureUrl){
+      Preview();
+      setPreview(true);
+    }
+    Preview();
   }
 
   const HandleUploadButton = async(event: React.MouseEvent<HTMLButtonElement , MouseEvent>) => {
@@ -344,7 +319,7 @@ const Upload: React.FC<UploadProps> = ({
       setExcels([]);
       setAudios([]);
       setWords([]);
-      setPreview(false);
+      //setPreview(false);
       setFilePreset(" ");
       setFileType(" ");
       setResourceFileType(" ")
@@ -367,7 +342,7 @@ const Upload: React.FC<UploadProps> = ({
           <div>
               <div>
                 <button className="upload-button-area" onClick={HandleChooseFilesButton}>
-                  <Icon path={mdiCloudArrowUpOutline} size={2}/> Upload File
+                  <Icon path={mdiCloudArrowUpOutline} size={2}/> {Title}
                 </button>
                 <input ref={InputRef} id="file-input" type="file" onChange={HandleFileInputChange} multiple={ChooseManyFiles} style={{ display: 'none' }} />
               </div>              
@@ -400,22 +375,37 @@ const Upload: React.FC<UploadProps> = ({
                     <div className='state-icon'>
                       {HandleState  === "Delete" ? (
                         <div onClick={HandleCancelButton}>
-                          <Icon path={mdiDeleteOutline} size={1.5}  color="#b80000" /> 
+                          <Icon path={mdiFileDocumentRemoveOutline } size={1.5}  color="#b80000" /> 
                         </div>
                       ) : HandleState === "Uploading" ? (
                         <Icon path={mdiLoading} size={1.5} spin   /> 
-                      ) : HandleState === "Done" ? (
+                      ) : HandleState === "Done" && FileType === "image" ? (
+                        <div onClick={HandlePreview}>
+                          <Icon path={mdiFileEyeOutline} size={1.5} />
+                        </div>
+                      ) : HandleState === "Done" && FileType != "image" ? (
                         <Icon path={mdiCheckCircleOutline} size={1.5} />
                       ) : " "}
                     </div>
                   </div>
               </div>
-            )) : " "
+            )) : SelectedFiles.length > 0 && ShowErrorMessage ? (
+              <div className='file-card error-box'>
+                <div className='file-icon'>
+                  <Icon path={mdiAlertCircleOutline} size={1.5} color="#b80000"  />
+                </div>
+                  <div className='file-details'>
+                    <div className='file-name'>
+                        <span className='error-text'>Invalid file type</span>
+                    </div>
+                  </div>
+              </div>
+            ) : " "
           } 
           </div>
         </div>
         <div className='function-buttons'>
-          {SelectedFiles.length > 0 && HandleState != "Done" ?( 
+          {SelectedFiles.length > 0 && HandleState != "Done" && !ShowErrorMessage ?( 
                 <button type='button' onClick={HandleUploadButton} className='upload-button'>Upload</button>
              ) : HandleState === 'Done' ? ( 
               <div className='handel-done-upload'>
@@ -423,22 +413,17 @@ const Upload: React.FC<UploadProps> = ({
                 <button type='button' onClick={HandleEditButton} className='edit-button'>Edit</button>
                 <button type='button' onClick={HandleCancelButton} className='done-button'>Done</button>
               </div>
+             ) : SelectedFiles.length > 0 && HandleState != "Done" && ShowErrorMessage ? (
+                <button type='button' onClick={HandleCancelButton} className='remove-file-button'>Remove File</button>
              ) : " "  
             }
         </div>
-        <div>
-          {ShowPreview && 
-            <div id='image-container'></div>
-          }
-          {ShowPreview && 
-            <div id='other-container'></div>
-          }
+        {ShowPreview &&
+        <div className='preview-container'>
+            <div className='image-container' id='image-container'></div>
+            <button type='button' onClick={HandleCancelButton} className='done-button'>Cansel</button>
         </div>
-        <div>
-          {ShowPreview && 
-            <div></div>
-          }
-        </div>
+        }
       </div>
     </div>
   );
